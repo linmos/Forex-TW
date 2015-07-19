@@ -1,2 +1,2 @@
 # ForexTW
-The extension can quickly show foreign exchange rate in the bank of Taiwan.
+The Google Chrome extension can quickly show foreign exchange rate in the bank of Taiwan.

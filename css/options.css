@@ -1,0 +1,79 @@
+body {
+	font-family: Helvetica, "Microsoft JhengHei";
+	background-color: #f0f0f0;
+	font-size: 14px;
+}
+
+h2 {
+  color: #777;
+	font-size: 22px;
+	margin-bottom: 19px;
+}
+
+#content {
+	width: 650px;
+	margin: 0px auto;
+	padding: 20px;
+	color: #383838;
+}
+
+#content-inner-container {
+	background-color: #fff;
+	border: 1px solid #cacaca;
+	padding: 30px 46px;
+
+	box-shadow: 0px 1px 0px #fff;
+	-webkit-box-shadow: 0px 1px 0px #fff;
+	-mozbox-shadow: 0px 1px 0px #fff;
+	-webkit-border-radius: 5px;
+	-moz-border-radius: 5px;
+	-border-radius: 5px;
+}
+
+.section-wrapper {
+	min-height: 60px;
+	border-top: 1px solid #dadada;
+}
+
+.section-label {
+  float: left;
+  font-weight: bold;
+  width: 150px;
+}
+
+.section-value {
+  float: left;
+}
+
+.bankList {
+  padding-top: 35px;
+}
+
+.saveButton {
+  padding-top: 15px;
+  text-align: center;
+}
+
+#saveBtn {
+  background-color: #428bca;
+  border: solid 1px #357ebd;
+  border-radius: 5px;
+  color: #fff;
+  padding: 5px 20px;
+  cursor: pointer;
+}
+#saveBtn:hover {
+  background-color: #3276b1;
+  border-color: #285e8e;
+}
+#saveBtn:focus {
+  outline: 0;
+}
+
+#copyright {
+	text-align: center;
+	color: #777;
+	font-size: 12px;
+	margin-bottom: 40px;
+	font-weight: 300;
+}

@@ -1,0 +1,56 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>銀行匯率查詢</title>
+  <link rel="stylesheet" href="css/popup.css">
+  <script src="js/jquery-2.1.1.min.js"></script>
+  <script src="js/iscroll.min.js"></script>
+  <script src="js/dataParser.js"></script>
+  <script src="js/popup.js"></script>
+</head>
+<body>
+  <div id="menuBar">
+    <select class="bankList">
+      <option value="004">004 台灣銀行</option>
+      <option value="005">005 土地銀行</option>
+      <option value="006">006 合庫商銀</option>
+      <option value="007">007 第一銀行</option>
+      <option value="008">008 華南銀行</option>
+      <option value="009">009 彰化銀行</option>
+      <option value="807">807 永豐銀行</option>
+      <option value="808">808 玉山銀行</option>
+    </select>
+  </div>
+
+  <div id="funcBar">
+    <div class="fx-datetime"></div>
+    <div class="btn-group">
+      <button type="button" id="spotBtn" class="btn active">即期</button>
+      <button type="button" id="cashBtn" class="btn">現金</button>
+    </div>
+  </div>
+
+  <div id="content">
+    <table class="fxTable tbHeader">
+      <thead>
+        <tr>
+          <th class="col1">幣別</th>
+          <th class="col2">買進</th>
+          <th class="col3">賣出</th>
+        </tr>
+      </thead>
+    </table>
+    <div class="scroller">
+      <table class="fxTable tbBody">
+        <tbody>
+          <tr>
+            <td class="loading-anim"><img src="images/loading.gif" width="24" height="24" alt="loading"></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <div id="notice">以上資料係由各銀行網站所取得，可能會依網路或資料處理時間而有延遲，實際匯率請以資料出處單位為準。</div>
+</body>
+</html>

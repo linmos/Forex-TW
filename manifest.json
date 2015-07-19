@@ -1,0 +1,32 @@
+{
+	"name": "銀行匯率查詢",
+  "short_name": "Forex TW",
+  "version": "1.0.6",
+  "manifest_version": 2,
+
+  "description": "快速查看台灣各大銀行外匯匯率",
+  "icons": {
+    "16": "images/icon.png",
+    "48": "images/icon_48.png",
+    "128": "images/icon_128.png"
+  },
+
+  "browser_action": {
+    "default_icon": "images/icon.png",
+    "default_popup": "popup.html"
+  },
+
+  "options_page": "options.html",
+
+  "permissions": [
+    "storage",
+    "http://rate.bot.com.tw/Pages/Static/",
+    "https://ebank.landbank.com.tw/infor/",
+    "http://www.tcb-bank.com.tw/finance_info/Pages/",
+    "http://www.esunbank.com.tw/info/",
+    "https://ibank.firstbank.com.tw/NetBank/7/0201.html?sh=none",
+    "https://mma.sinopac.com/WebATM/html/pages/jsp/mma/bank/CurrRemittance.jsp?src=EBANK",
+    "https://ibank.hncb.com.tw/netbank/pages/jsp/ExtSel/RTExange.html",
+    "https://www.chb.com.tw/chbib/faces/po/po01009/PO01009_1.jsp"
+  ]
+}

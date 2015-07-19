@@ -1,0 +1,104 @@
+body {
+  min-width: 320px;
+  min-height: 415px;
+  background: #262627;
+  color:#c0c0c0;
+  font-family: Helvetica, "Microsoft JhengHei";
+}
+
+#menuBar {
+  text-align: center;
+}
+
+#menuBar .bankList {
+  background: #2d2d2d;
+  border: solid 1px #515151;
+  border-radius: 4px;
+  color: #ebb52d;
+  font-size: 15px;
+  padding: 3px;
+}
+
+#funcBar {
+  margin: 0 2px;
+  height: 25px;
+  line-height: 25px;
+}
+
+.btn-group {
+  float:right;
+}
+
+.btn-group > .btn {
+  float:left;
+  margin: 0;
+  background-color: #428bca;
+  border: 1px solid #357ebd;
+  border-radius: 4px;
+  color: #fff;
+  cursor: pointer;
+}
+.btn-group > .btn:first-child:not(:last-child) {
+  border-bottom-right-radius: 0;
+  border-top-right-radius: 0;
+}
+.btn-group > .btn:last-child:not(:first-child) {
+  border-bottom-left-radius: 0;
+  border-top-left-radius: 0;
+}
+.btn-group > .btn.active {
+  background-color: #3276b1;
+  border-color: #285e8e;
+}
+.btn-group > .btn:focus {
+  outline: 0;
+}
+
+.fx-datetime {
+  float: left;
+  width: 220px;
+  font-size: 13px;
+}
+
+#content {
+  clear: both;
+}
+
+.scroller {
+  position: relative;
+  height: 300px;
+  overflow: hidden;
+}
+
+.fxTable {
+  width: 100%;
+  border: solid 1px #555;
+  border-collapse: collapse;
+  border-spacing: 0;
+  background: #000;
+  font-size: 15px;
+}
+.fxTable th, .fxTable td {
+  border: solid 1px #555;
+  padding: 3px;
+}
+.fxTable .col1 { width: 40%; }
+.fxTable .col2 { width: 30%; }
+.fxTable .col3 { width: 30%; }
+.fxTable tbody .col2, .fxTable tbody .col3 { text-align: right; }
+.fxTable tbody tr:nth-child(odd) { background: #262627; }
+.fxTable tbody tr:nth-child(even) { background: #1d1d1d; }
+
+.scroller .fxTable {
+  margin-top: -1px;
+}
+
+.fxTable .loading-anim {
+  text-align: center;
+  padding: 6px 0 3px 0;
+}
+
+#notice {
+  font-size: 12px;
+  margin-top: 3px;
+}
