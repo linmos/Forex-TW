@@ -158,7 +158,7 @@ dataParser['007'] = function(fn) {
     htmlStr = htmlStr.replace(/<img[^>]*>/ig, '');
 
     var dom = $(htmlStr);
-    var datetime = $.trim(dom.find('table:first .locator').text());
+    var datetime = $.trim(dom.find('table:first .locator2').text());
     var dataTable = dom.find('#table1 tr');
     var res = {};
 
@@ -261,6 +261,136 @@ dataParser['009'] = function(fn) {
       }
     });
 
+    fn.apply(this, [res]);
+  });
+};
+
+// 011 上海銀行
+dataParser['011'] = function(fn) {
+  dataRequest = $.get('https://ibank.scsb.com.tw/netbank.portal?_nfpb=true&_pageLabel=page_other12&_nfls=false', function(htmlStr) {
+    htmlStr = htmlStr.replace(/<img[^>]*>/ig, '');
+
+    var dom = $(htmlStr);
+    var dom = dom.find('table.txt07');
+    var datetimeSp = dom.find('tr:eq(1) td').text().substring(7, 28).split(' ');
+
+    var datetime = (datetimeSp[0])-0+1911 + '/' + datetimeSp[3] + '/' + datetimeSp[5] + datetimeSp[6].replace('日', ' ');
+    var dataTable = dom.find('tr');
+    var res = {};
+
+    res.datetime = datetime;
+    res.cashRate = [];
+    res.spotRate = [];
+
+    dataTable.each(function() {
+      var tds = $(this).find('td');
+
+      if (!$(tds[0]).hasClass('txt09')) return;
+
+      var tmpObj = {
+        title:      $.trim(tds.eq(0).text()),
+        priceIN:    $.trim(tds.eq(2).text()),
+        priceOUT:   $.trim(tds.eq(3).text())
+      };
+
+      var type = tds.eq(0).text();
+      if ((type.indexOf('現鈔') >= 0 || type.indexOf('現金') >= 0)  && tmpObj.title.length > 0) {
+        res.cashRate.push(tmpObj);
+      } else {
+        res.spotRate.push(tmpObj);
+      }
+    });
+
+    fn.apply(this, [res]);
+  });
+};
+
+// 013 國泰世華
+dataParser['013'] = function(fn) {
+  dataRequest = $.get('https://www.cathaybk.com.tw/cathaybk/mobile/rate_01.asp', function(htmlStr) {
+    htmlStr = htmlStr.replace(/<img[^>]*>/ig, '');
+
+    var dom = $(htmlStr);
+    var datetime = dom.find('section:eq(0)').text().substring(17, 33);
+    var dataTable = dom.find('section.rate_list dd');
+    var res = {};
+
+    res.datetime = datetime.replace('年', '/').replace('月', '/').replace('日', ' ').replace('時', ':');
+    res.cashRate = [];
+    res.spotRate = [];
+
+    dataTable.each(function() {
+      var tds = $(this).find('div');
+
+      var tmpObj = {
+        title:      $.trim(tds.eq(0).text()).split('(')[0],
+        priceIN:    $.trim(tds.eq(2).text()),
+        priceOUT:   $.trim(tds.eq(4).text())
+      };
+
+      var type = tds.eq(0).text();
+      if (type.indexOf('現鈔') >= 0  && tmpObj.title.length > 0) {
+        res.cashRate.push(tmpObj);
+      } else {
+        res.spotRate.push(tmpObj);
+      }
+    });
+
+    fn.apply(this, [res]);
+  });
+};
+
+// 017 兆豐商銀
+dataParser['017'] = function(fn) {
+  var ran_number = Math.random() * 4;
+  dataRequest = $.get('https://wwwfile.megabank.com.tw/rates/D001/_@V_.asp?random=' + ran_number, function(data) {
+    var separate = data.split('|');
+    var dateTime = separate[0] + ' ' + separate[1];
+    var exData = separate[2].split('__header_=0;');
+    var len = exData.length;
+    var res = {};
+    var tmpObj;
+
+    res.datetime = dateTime;
+    res.cashRate = [];
+    res.spotRate = [];
+
+    for (var i = 0; i < len; i++) {
+      if (exData[i] == '') continue;
+
+      var row = exData[i].split(';');
+      var priceObj = [];
+
+      for (var j = 0; j < row.length; j++) {
+        var col = row[j].split('=');
+        switch (col[0]) {
+          case 'col0': priceObj['title'] = col[1].split('[')[0]; break;
+          case 'col1': priceObj['spotPriceIN'] = col[1]; break;
+          case 'col2': priceObj['cashPriceIN'] = col[1]; break;
+          case 'col3': priceObj['spotPriceOUT'] = col[1]; break;
+          case 'col4': priceObj['cashPriceOUT'] = col[1]; break;
+        }
+      }
+
+      if (priceObj.spotPriceIN != '---') {
+        tmpObj = {
+          title:    priceObj.title,
+          priceIN:  priceObj.spotPriceIN,
+          priceOUT: priceObj.spotPriceOUT
+        };
+        res.spotRate.push(tmpObj);
+      }
+
+      if (priceObj.cashPriceIN != '---') {
+        tmpObj = {
+          title:    priceObj.title,
+          priceIN:  priceObj.cashPriceIN,
+          priceOUT: priceObj.cashPriceOUT
+        };
+        res.cashRate.push(tmpObj);
+      }
+    }
+    
     fn.apply(this, [res]);
   });
 };
