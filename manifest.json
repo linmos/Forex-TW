@@ -1,7 +1,7 @@
 {
 	"name": "銀行匯率查詢",
   "short_name": "Forex TW",
-  "version": "1.0.7",
+  "version": "1.0.8",
   "manifest_version": 2,
 
   "description": "快速查看台灣各大銀行外匯匯率",
@@ -23,8 +23,7 @@
     "http://rate.bot.com.tw/xrt?Lang=zh-TW",
     "https://ebank.landbank.com.tw/infor/",
     "http://www.tcb-bank.com.tw/finance_info/Pages/",
-    "https://www.esunbank.com.tw/",
-    "https://wealth.esunbank.com.tw/",
+    "http://vps.linmos.com.tw:8168/api/bank/",
     "https://ibank.firstbank.com.tw/NetBank/7/0201.html?sh=none",
     "https://mma.sinopac.com/WebATM/html/pages/jsp/mma/bank/CurrRemittance.jsp?src=EBANK",
     "https://ibank.hncb.com.tw/netbank/pages/jsp/ExtSel/RTExange.html",

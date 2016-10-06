@@ -442,61 +442,33 @@ dataParser['807'] = function(fn) {
 
 // 808 玉山銀行
 dataParser['808'] = function(fn) {
-  var settings = {
-  "async": true,
-  "crossDomain": true,
-  "url": "https://www.esunbank.com.tw/bank/Layouts/esunbank/Deposit/DpService.aspx/GetForeignExchageRate",
-  "method": "POST",
-  "headers": {
-    "content-type": "application/json; charset=UTF-8",
-    "referer": "https://www.esunbank.com.tw/bank/personal/deposit/rate/forex/foreign-exchange-rates",
-    "cache-control": "no-cache",
-    "postman-token": "aa09c485-52e7-5f69-4edb-9a7cb3c5a131"
-  },
-  "data": "{day:'2016-10-06',time:'18:28:40'}"
-}
-
-$.ajax(settings).done(function (response) {
-  console.log(response);
-});
-
-	dataRequest = $.post('https://www.esunbank.com.tw/bank/Layouts/esunbank/Deposit/DpService.aspx/GetForeignExchageRates',
-    postBody,
-   function(htmlStr) {
-    htmlStr = htmlStr.replace(/<img[^>]*>/ig, '');
-
-    var dom = $(htmlStr);
-    var date = dom.find('#Uc_rate_spot_exchange_ListWorkDays option:selected').text();
-    var time = dom.find('#Uc_rate_spot_exchange_ListDateTime option:selected').text();
-    var dataTable = dom.find('.datatable .tableContent-light');
+  $.post('http://vps.linmos.com.tw:8168/api/bank/808', function(data) {
+    var rates = data.Rates;
     var res = {};
-
-    res.datetime = date + time.substr(0, 6);
+    res.datetime = rates[0].UpdateTime.replace(/-/g, '/').replace('T', ' ');
     res.cashRate = [];
     res.spotRate = [];
 
-    dataTable.each(function() {
-      var tds = $(this).find('td');
-      var tmpObj;
-
-      tmpObj = {
-        title: $.trim(tds.eq(0).text()),
-        priceIN:    $.trim(tds.eq(1).text()),
-        priceOUT:   $.trim(tds.eq(2).text())
+    for (var i = 0; i < rates.length; i++) {
+      var rate = rates[i];
+      var tmpObj = {
+        title:    rate.Title,
+        priceIN:  rate.BBoardRate,
+        priceOUT: rate.SBoardRate
       };
-      if (tmpObj.title.length > 0) {
-        res.cashRate.push(tmpObj);
-      }
-
-      tmpObj = {
-        title: $.trim(tds.eq(3).text()),
-        priceIN:    $.trim(tds.eq(4).text()),
-        priceOUT:   $.trim(tds.eq(5).text())
-      };
-      if (tmpObj.title.length > 0) {
+      if (tmpObj.priceIN != '' || tmpObj.priceOUT != '') {
         res.spotRate.push(tmpObj);
       }
-    });
+
+      tmpObj = {
+        title:    rate.Title,
+        priceIN:  rate.CashBBoardRate,
+        priceOUT: rate.CashSBoardRate
+      };
+      if (tmpObj.priceIN != '' || tmpObj.priceOUT != '') {
+        res.cashRate.push(tmpObj);
+      }
+    }
 
     fn.apply(this, [res]);
   });
