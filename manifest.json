@@ -20,10 +20,11 @@
 
   "permissions": [
     "storage",
-    "http://rate.bot.com.tw/Pages/Static/",
+    "http://rate.bot.com.tw/xrt?Lang=zh-TW",
     "https://ebank.landbank.com.tw/infor/",
     "http://www.tcb-bank.com.tw/finance_info/Pages/",
-    "http://www.esunbank.com.tw/info/",
+    "https://www.esunbank.com.tw/",
+    "https://wealth.esunbank.com.tw/",
     "https://ibank.firstbank.com.tw/NetBank/7/0201.html?sh=none",
     "https://mma.sinopac.com/WebATM/html/pages/jsp/mma/bank/CurrRemittance.jsp?src=EBANK",
     "https://ibank.hncb.com.tw/netbank/pages/jsp/ExtSel/RTExange.html",

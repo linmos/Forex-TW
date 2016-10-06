@@ -11,12 +11,12 @@ dataParser['reset'] = function() {
 
 // 004 台灣銀行
 dataParser['004'] = function(fn) {
-  dataRequest = $.get('http://rate.bot.com.tw/Pages/Static/UIP003.zh-TW.htm', function(htmlStr) {
+  dataRequest = $.get('http://rate.bot.com.tw/xrt?Lang=zh-TW', function(htmlStr) {
     htmlStr = htmlStr.replace(/<img[^>]*>/ig, '');
 
     var dom = $(htmlStr);
-    var datetime = $.trim(dom.find('.entry-content > table > tbody table > tbody > tr > td').text()).substring(10);
-    var dataTable = dom.find('.entry-content > table:nth-child(2) tr');
+    var datetime = $.trim(dom.find('.container .text-info > .time').text());
+    var dataTable = dom.find('table tr');
     var res = {};
 
     res.datetime = datetime;
@@ -29,8 +29,10 @@ dataParser['004'] = function(fn) {
 
       if (tds.length == 0) return;
 
+      var rateTitle = $.trim(tds.eq(0).find('.hidden-phone').text());
+      
       tmpObj = {
-        title:    $.trim(tds.eq(0).text()).split(' (')[0],
+        title:    rateTitle,
         priceIN:  $.trim(tds.eq(1).text()),
         priceOUT: $.trim(tds.eq(2).text())
       };
@@ -39,7 +41,7 @@ dataParser['004'] = function(fn) {
       }
 
       tmpObj = {
-        title:    $.trim(tds.eq(0).text()).split(' (')[0],
+        title:    rateTitle,
         priceIN:  $.trim(tds.eq(3).text()),
         priceOUT: $.trim(tds.eq(4).text())
       };
@@ -158,7 +160,7 @@ dataParser['007'] = function(fn) {
     htmlStr = htmlStr.replace(/<img[^>]*>/ig, '');
 
     var dom = $(htmlStr);
-    var datetime = $.trim(dom.find('table:first .locator2').text());
+    var datetime = dom.eq(25).text();
     var dataTable = dom.find('#table1 tr');
     var res = {};
 
@@ -440,7 +442,27 @@ dataParser['807'] = function(fn) {
 
 // 808 玉山銀行
 dataParser['808'] = function(fn) {
-	dataRequest = $.get('http://www.esunbank.com.tw/info/rate_spot_exchange.aspx', function(htmlStr) {
+  var settings = {
+  "async": true,
+  "crossDomain": true,
+  "url": "https://www.esunbank.com.tw/bank/Layouts/esunbank/Deposit/DpService.aspx/GetForeignExchageRate",
+  "method": "POST",
+  "headers": {
+    "content-type": "application/json; charset=UTF-8",
+    "referer": "https://www.esunbank.com.tw/bank/personal/deposit/rate/forex/foreign-exchange-rates",
+    "cache-control": "no-cache",
+    "postman-token": "aa09c485-52e7-5f69-4edb-9a7cb3c5a131"
+  },
+  "data": "{day:'2016-10-06',time:'18:28:40'}"
+}
+
+$.ajax(settings).done(function (response) {
+  console.log(response);
+});
+
+	dataRequest = $.post('https://www.esunbank.com.tw/bank/Layouts/esunbank/Deposit/DpService.aspx/GetForeignExchageRates',
+    postBody,
+   function(htmlStr) {
     htmlStr = htmlStr.replace(/<img[^>]*>/ig, '');
 
     var dom = $(htmlStr);
