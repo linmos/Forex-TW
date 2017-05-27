@@ -276,7 +276,7 @@ dataParser['011'] = function(fn) {
     var dom = dom.find('table.txt07');
     var datetimeSp = dom.find('tr:eq(1) td').text().substring(7, 28).split(' ');
 
-    var datetime = (datetimeSp[0])-0+1911 + '/' + datetimeSp[3] + '/' + datetimeSp[5] + datetimeSp[6].replace('日', ' ');
+    var datetime = (datetimeSp[0])-0+1911 + '/' + datetimeSp[2] + '/' + datetimeSp[4] + ' ' + datetimeSp[6];
     var dataTable = dom.find('tr');
     var res = {};
 
@@ -300,6 +300,51 @@ dataParser['011'] = function(fn) {
         res.cashRate.push(tmpObj);
       } else {
         res.spotRate.push(tmpObj);
+      }
+    });
+
+    fn.apply(this, [res]);
+  });
+};
+
+// 012 台北富邦銀行
+dataParser['012'] = function(fn) {
+  dataRequest = $.get('https://ebank.taipeifubon.com.tw/B2C/cfhqu/cfhqu009/CFHQU009_Home.faces', function(htmlStr) {
+    htmlStr = htmlStr.replace(/<img[^>]*>/ig, '');
+
+    var dom = $(htmlStr).find('table.tb1');
+    var datetime = dom.find('.tb_tit').text().substring(5, 21);
+    var dataTable = dom.find('tr');
+    var res = {};
+
+    res.datetime = datetime;
+    res.cashRate = [];
+    res.spotRate = [];
+
+    dataTable.each(function() {
+      var tds = $(this).find('td');
+      if (tds.eq(0).hasClass('tb_tit') || tds.eq(0).hasClass('hd') || tds.eq(0).hasClass('hd3')) {
+        return;
+      }
+
+      var title = $.trim(tds.eq(0).text()).split('(')[0];
+      if (title.length == 0) return;
+
+      var tmpObj = {
+        title:      title,
+        priceIN:    $.trim(tds.eq(1).text()),
+        priceOUT:   $.trim(tds.eq(2).text())
+      };
+      res.spotRate.push(tmpObj);
+
+      tmpObj = {
+        title:      title,
+        priceIN:    $.trim(tds.eq(3).text()),
+        priceOUT:   $.trim(tds.eq(4).text())
+      };
+
+      if (tmpObj.priceIN != '---' || tmpObj.priceOUT != '---') {
+        res.cashRate.push(tmpObj);
       }
     });
 
@@ -469,6 +514,89 @@ dataParser['808'] = function(fn) {
         res.cashRate.push(tmpObj);
       }
     }
+
+    fn.apply(this, [res]);
+  });
+};
+
+// 812 台新銀行
+dataParser['812'] = function(fn) {
+  dataRequest = $.get('https://www.taishinbank.com.tw/TS/TS06/TS0605/TS060502/index.htm?urlPath1=TS02&urlPath2=TS0202', function(htmlStr) {
+    htmlStr = htmlStr.replace(/<img[^>]*>/ig, '');
+
+    var dom = $(htmlStr);
+    var datetime = dom.find('.box960info table span.content').text().substring(7, 24).replace('  ', ' ');
+    var dataTable = dom.find('.box960info table.table01 tr');
+    var res = {};
+
+    res.datetime = datetime;
+    res.cashRate = [];
+    res.spotRate = [];
+
+    dataTable.each(function(i, el) {
+      if (i === 0) return;
+      var tds = $(this).find('td');
+
+      var tmpObj = {
+        title:      $.trim(tds.eq(0).text()),
+        priceIN:    tds.eq(1).text(),
+        priceOUT:   tds.eq(2).text()
+      };
+      if (tds.eq(1).text() != '-' && tds.eq(2).text() != '-') {
+        res.spotRate.push(tmpObj);
+        
+      }
+
+      tmpObj = {
+        title:      $.trim(tds.eq(0).text()),
+        priceIN:    tds.eq(3).text(),
+        priceOUT:   tds.eq(4).text()
+      };
+      if (tds.eq(3).text() != '-' && tds.eq(4).text() != '-') {
+        res.cashRate.push(tmpObj);
+      }
+    });
+
+    fn.apply(this, [res]);
+  });
+};
+
+// 822 中國信託
+dataParser['822'] = function(fn) {
+  dataRequest = $.get('https://www.ctbcbank.com/CTCBPortalWeb/appmanager/ebank/rb?_nfpb=true&_pageLabel=TW_RB_CM_ebank_018001&_windowLabel=T31400173241287027448950', function(htmlStr) {
+    htmlStr = htmlStr.replace(/<img[^>]*>/ig, '');
+
+    var dom = $(htmlStr);
+    var datetime = dom.find('#pageForm\\3atwdDiv .answer table tr:nth-child(2) > td').text().substring(5, 21);
+    var dataTable = dom.find('#mainTable tr');
+    var res = {};
+
+    res.datetime = datetime;
+    res.cashRate = [];
+    res.spotRate = [];
+
+    dataTable.each(function(i, el) {
+      if (i === 0) return;
+      var tds = $(this).find('td');
+
+      var tmpObj = {
+        title:      $.trim(tds.eq(0).text()),
+        priceIN:    (tds.eq(1).text()-0).toString(),
+        priceOUT:   (tds.eq(2).text()-0).toString()
+      };
+      if (tds.eq(1).text() != '' && tds.eq(2).text() != '') {
+        res.cashRate.push(tmpObj);
+      }
+
+      tmpObj = {
+        title:      $.trim(tds.eq(0).text()),
+        priceIN:    (tds.eq(3).text()-0).toString(),
+        priceOUT:   (tds.eq(4).text()-0).toString()
+      };
+      if (tds.eq(3).text() != '' && tds.eq(4).text() != '') {
+        res.spotRate.push(tmpObj);
+      }
+    });
 
     fn.apply(this, [res]);
   });
