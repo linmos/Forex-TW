@@ -487,7 +487,7 @@ dataParser['807'] = function(fn) {
 
 // 808 玉山銀行
 dataParser['808'] = function(fn) {
-  $.post('http://vps.linmos.com.tw:8168/api/bank/808', function(data) {
+  $.get('https://linmos.azurewebsites.net/api/v1/exchange/808', function(data) {
     var rates = data.Rates;
     var res = {};
     res.datetime = rates[0].UpdateTime.replace(/-/g, '/').replace('T', ' ');
@@ -516,7 +516,7 @@ dataParser['808'] = function(fn) {
     }
 
     fn.apply(this, [res]);
-  });
+  }, 'json');
 };
 
 // 812 台新銀行
