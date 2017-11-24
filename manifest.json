@@ -1,7 +1,7 @@
 {
 	"name": "銀行匯率查詢",
   "short_name": "Forex TW",
-  "version": "1.0.11",
+  "version": "1.0.12",
   "manifest_version": 2,
 
   "description": "快速查看台灣各大銀行外匯匯率",
@@ -25,11 +25,11 @@
     "http://www.tcb-bank.com.tw/finance_info/Pages/",
     "https://linmos.azurewebsites.net/api/v1/exchange/",
     "https://ibank.firstbank.com.tw/NetBank/7/0201.html?sh=none",
-    "https://mma.sinopac.com/WebATM/html/pages/jsp/mma/bank/CurrRemittance.jsp?src=EBANK",
+    "https://mma.sinopac.com/ws/share/rate/ws_exchange.ashx",
     "https://ibank.hncb.com.tw/netbank/pages/jsp/ExtSel/RTExange.html",
-    "https://www.chb.com.tw/chbib/faces/po/po01009/PO01009_1.jsp",
+    "https://www.bankchb.com/chb_web/garden?action=getView&viewId=G0100",
     "https://ibank.scsb.com.tw/netbank.portal?_nfpb=true&_pageLabel=page_other12&_nfls=false",
-    "https://www.cathaybk.com.tw/cathaybk/mobile/rate_01.asp",
+    "https://www.cathaybk.com.tw/mobile/personal/rate/exchange/currency-billboard/currency-billboard.aspx",
     "https://wwwfile.megabank.com.tw/rates/D001/_@V_.asp",
     "https://ebank.taipeifubon.com.tw/B2C/cfhqu/cfhqu009/CFHQU009_Home.faces",
     "https://www.ctbcbank.com/CTCBPortalWeb/appmanager/ebank/rb?_nfpb=true&_pageLabel=TW_RB_CM_ebank_018001&_windowLabel=T31400173241287027448950",

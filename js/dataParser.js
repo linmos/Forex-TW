@@ -123,9 +123,9 @@ dataParser['006'] = function(fn) {
       var tmpObj;
 
       if ($(this).hasClass('content-line')) {
-        ti = tds.eq(0).text();
-        p1 = tds.eq(2).text();
-        p2 = tds.eq(3).text();
+        ti = $.trim(tds.eq(0).text());
+        p1 = $.trim(tds.eq(2).text());
+        p2 = $.trim(tds.eq(3).text());
       }
 
       if ($(this).hasClass('content-bk-line')) {
@@ -134,7 +134,7 @@ dataParser['006'] = function(fn) {
           priceIN:  p1,
           priceOUT: $.trim(tds.eq(2).text())
         };
-        if (tmpObj.title.length > 0 && tmpObj.priceIN != '\xA0') {
+        if (tmpObj.title.length > 0 && tmpObj.priceIN != '') {
           res.spotRate.push(tmpObj);
         }
 
@@ -144,7 +144,7 @@ dataParser['006'] = function(fn) {
           priceOUT: $.trim(tds.eq(3).text())
         };
 
-        if (tmpObj.title.length > 0 && tmpObj.priceIN != '\xA0') {
+        if (tmpObj.title.length > 0 && tmpObj.priceIN != '') {
           res.cashRate.push(tmpObj);
         }
       }
@@ -230,25 +230,18 @@ dataParser['008'] = function(fn) {
 
 // 009 彰化銀行
 dataParser['009'] = function(fn) {
-  dataRequest = $.get('https://www.chb.com.tw/chbib/faces/po/po01009/PO01009_1.jsp', function(htmlStr) {
-    htmlStr = htmlStr.replace(/<img[^>]*>/ig, '');
-
-    var dom = $(htmlStr);
-    var datetime = $.trim(dom.find('table .contentNote:eq(1)').text());
-    var year = datetime.substring(7, 10);
-    var date = datetime.substring(11, 22);
-    var dataTable = dom.find('#form1 > table.tableColorWhite tr');
+  dataRequest = $.post('https://www.bankchb.com/chb_web/garden?action=getView&viewId=G0100', function(data) {
+    var dom = $(data.views[0].data.content);
+    var datetime = $.trim(dom.find('small').text());
+    var dataTable = dom.find('table tbody tr');
     var res = {};
 
-    res.datetime = (year-0)+1911 + '/' + date;
+    res.datetime = datetime.substring(6, 25);
     res.cashRate = [];
     res.spotRate = [];
 
     dataTable.each(function() {
       var tds = $(this).find('td');
-
-      if ($(tds[1]).hasClass('tableColor0') || $(tds[0]).hasClass('tableColorYellow')) return;
-
       var tmpObj = {
         title:      $.trim(tds.eq(0).text()).split('（')[0],
         priceIN:    $.trim(tds.eq(1).text()),
@@ -264,7 +257,7 @@ dataParser['009'] = function(fn) {
     });
 
     fn.apply(this, [res]);
-  });
+  }, 'json');
 };
 
 // 011 上海銀行
@@ -354,12 +347,12 @@ dataParser['012'] = function(fn) {
 
 // 013 國泰世華
 dataParser['013'] = function(fn) {
-  dataRequest = $.get('https://www.cathaybk.com.tw/cathaybk/mobile/rate_01.asp', function(htmlStr) {
+  dataRequest = $.get('https://www.cathaybk.com.tw/mobile/personal/rate/exchange/currency-billboard/currency-billboard.aspx', function(htmlStr) {
     htmlStr = htmlStr.replace(/<img[^>]*>/ig, '');
 
     var dom = $(htmlStr);
-    var datetime = dom.find('section:eq(0)').text().substring(17, 33);
-    var dataTable = dom.find('section.rate_list dd');
+    var datetime = dom.find('.functionBar .time').text().substring(5, 21);
+    var dataTable = dom.find('#panelRateList .datas table > tbody > tr');
     var res = {};
 
     res.datetime = datetime.replace('年', '/').replace('月', '/').replace('日', ' ').replace('時', ':');
@@ -367,12 +360,12 @@ dataParser['013'] = function(fn) {
     res.spotRate = [];
 
     dataTable.each(function() {
-      var tds = $(this).find('div');
+      var tds = $(this).find('td');
 
       var tmpObj = {
         title:      $.trim(tds.eq(0).text()).split('(')[0],
         priceIN:    $.trim(tds.eq(2).text()),
-        priceOUT:   $.trim(tds.eq(4).text())
+        priceOUT:   $.trim(tds.eq(3).text())
       };
 
       var type = tds.eq(0).text();
@@ -390,6 +383,7 @@ dataParser['013'] = function(fn) {
 // 017 兆豐商銀
 dataParser['017'] = function(fn) {
   var ran_number = Math.random() * 4;
+  document.cookie="mega%5Fstatus=1123=745d4a21e71174d0; domain=wwwfile.megabank.com.tw; path=/";
   dataRequest = $.get('https://wwwfile.megabank.com.tw/rates/D001/_@V_.asp?random=' + ran_number, function(data) {
     var separate = data.split('|');
     var dateTime = separate[0] + ' ' + separate[1];
@@ -444,45 +438,49 @@ dataParser['017'] = function(fn) {
 
 // 807 永豐銀行
 dataParser['807'] = function(fn) {
-  dataRequest = $.get('https://mma.sinopac.com/WebATM/html/pages/jsp/mma/bank/CurrRemittance.jsp?src=EBANK', function(htmlStr) {
-    htmlStr = htmlStr.replace(/<img[^>]*>/ig, '');
-
-    var dom = $(htmlStr);
-    var datetime = dom.find('tbody:first > tr:nth-child(3) > td').text();
-    var dataTable = dom.find('table.mt tr');
+  dataRequest = $.get('https://mma.sinopac.com/ws/share/rate/ws_exchange.ashx?exchangeType=REMIT', function(data) {
+    var datetime = data[0].TitleInfo.substring(25, 44).replace(/-/g, '/');
+    var row = data[0].SubInfo
     var res = {};
 
-    res.datetime = datetime.substring(6, 22).replace(/-/g, '/');
+    res.datetime = datetime
     res.cashRate = [];
     res.spotRate = [];
 
-    dataTable.each(function() {
-      if ($(this).attr('align')) return;
-
-      var tds = $(this).find('td');
+    for (var i = 0; i < row.length; i++) {
       var tmpObj;
 
       tmpObj = {
-        title: $.trim(tds.eq(0).text()).split('(')[0],
-        priceIN:    $.trim(tds.eq(1).text()),
-        priceOUT:   $.trim(tds.eq(2).text())
+        title: row[i].DataValue1,
+        priceIN: row[i].DataValue2,
+        priceOUT: row[i].DataValue3
       };
-      if (tmpObj.title.length > 0) {
+      
+      if (tmpObj.priceIN != '-' && tmpObj.priceOUT != '-') {
         res.spotRate.push(tmpObj);
       }
+    }
 
-      tmpObj = {
-        title: $.trim(tds.eq(0).text()).split('(')[0],
-        priceIN:    $.trim(tds.eq(3).text()),
-        priceOUT:   $.trim(tds.eq(4).text())
-      };
-      if (tmpObj.priceIN.length > 0 && tmpObj.priceOUT.length > 0) {
-        res.cashRate.push(tmpObj);
+    dataRequest = $.get('https://mma.sinopac.com/ws/share/rate/ws_exchange.ashx?exchangeType=CASH', function(data) {
+      row = data[0].SubInfo
+
+      for (var i = 0; i < row.length; i++) {
+        var tmpObj;
+  
+        tmpObj = {
+          title: row[i].DataValue1,
+          priceIN: row[i].DataValue2,
+          priceOUT: row[i].DataValue3
+        };
+        
+        if (tmpObj.priceIN != '-' && tmpObj.priceOUT != '-') {
+          res.cashRate.push(tmpObj);
+        }
       }
-    });
 
-    fn.apply(this, [res]);
-  });
+      fn.apply(this, [res]);
+    }, 'json');
+  }, 'json');
 };
 
 // 808 玉山銀行
