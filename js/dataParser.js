@@ -11,7 +11,7 @@ dataParser['reset'] = function() {
 
 // 004 台灣銀行
 dataParser['004'] = function(fn) {
-  dataRequest = $.get('http://rate.bot.com.tw/xrt?Lang=zh-TW', function(htmlStr) {
+  dataRequest = $.get('https://linmos.azurewebsites.net/api/v1/exchange/4', function(htmlStr) {
     htmlStr = htmlStr.replace(/<img[^>]*>/ig, '');
 
     var dom = $(htmlStr);

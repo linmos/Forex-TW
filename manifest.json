@@ -1,7 +1,7 @@
 {
 	"name": "銀行匯率查詢",
   "short_name": "Forex TW",
-  "version": "1.0.12",
+  "version": "1.0.13",
   "manifest_version": 2,
 
   "description": "快速查看台灣各大銀行外匯匯率",
@@ -20,7 +20,6 @@
 
   "permissions": [
     "storage",
-    "http://rate.bot.com.tw/xrt?Lang=zh-TW",
     "https://ebank.landbank.com.tw/infor/",
     "http://www.tcb-bank.com.tw/finance_info/Pages/",
     "https://linmos.azurewebsites.net/api/v1/exchange/",
