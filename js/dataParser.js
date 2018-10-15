@@ -230,13 +230,15 @@ dataParser['008'] = function(fn) {
 
 // 009 彰化銀行
 dataParser['009'] = function(fn) {
-  dataRequest = $.post('https://www.bankchb.com/chb_web/garden?action=getView&viewId=G0100', function(data) {
-    var dom = $(data.views[0].data.content);
-    var datetime = $.trim(dom.find('small').text());
+  dataRequest = $.get('https://www.bankchb.com/frontend/G0100.jsp', function(htmlStr) {
+    htmlStr = htmlStr.replace(/<img[^>]*>/ig, '');
+
+    var dom = $(htmlStr).find('#content-inside');
+    var datetime = $.trim(dom.find('.chb-comp-16').eq(1).text());
     var dataTable = dom.find('table tbody tr');
     var res = {};
 
-    res.datetime = datetime.substring(6, 25);
+    res.datetime = datetime.replace(/\s+/g, ' ').substring(8);
     res.cashRate = [];
     res.spotRate = [];
 
@@ -257,7 +259,7 @@ dataParser['009'] = function(fn) {
     });
 
     fn.apply(this, [res]);
-  }, 'json');
+  });
 };
 
 // 011 上海銀行
