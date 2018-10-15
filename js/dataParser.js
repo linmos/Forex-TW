@@ -353,8 +353,8 @@ dataParser['013'] = function(fn) {
     htmlStr = htmlStr.replace(/<img[^>]*>/ig, '');
 
     var dom = $(htmlStr);
-    var datetime = dom.find('.functionBar .time').text().substring(5, 21);
-    var dataTable = dom.find('#panelRateList .datas table > tbody > tr');
+    var datetime = dom.find('#layout_0_rightcontent_1_firsttab01_0_tab_rate_realtime p').eq(0).text().substring(17, 33);
+    var dataTable = dom.find('table.table-rate > tbody > tr');
     var res = {};
 
     res.datetime = datetime.replace('年', '/').replace('月', '/').replace('日', ' ').replace('時', ':');
@@ -366,8 +366,8 @@ dataParser['013'] = function(fn) {
 
       var tmpObj = {
         title:      $.trim(tds.eq(0).text()).split('(')[0],
-        priceIN:    $.trim(tds.eq(2).text()),
-        priceOUT:   $.trim(tds.eq(3).text())
+        priceIN:    $.trim(tds.eq(1).text()),
+        priceOUT:   $.trim(tds.eq(2).text())
       };
 
       var type = tds.eq(0).text();
