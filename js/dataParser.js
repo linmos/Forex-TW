@@ -269,9 +269,9 @@ dataParser['011'] = function(fn) {
 
     var dom = $(htmlStr);
     var dom = dom.find('table.txt07');
-    var datetimeSp = dom.find('tr:eq(1) td').text().substring(7, 28).split(' ');
+    var datetimeSp = dom.find('tr:eq(1) td').text().substring(7).split(' ');
 
-    var datetime = (datetimeSp[0])-0+1911 + '/' + datetimeSp[2] + '/' + datetimeSp[4] + ' ' + datetimeSp[6];
+    var datetime = (datetimeSp[0])-0+1911 + '/' + datetimeSp[3] + '/' + datetimeSp[5] + ' ' + datetimeSp[6].substr(-8);
     var dataTable = dom.find('tr');
     var res = {};
 
