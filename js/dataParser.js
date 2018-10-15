@@ -385,8 +385,15 @@ dataParser['013'] = function(fn) {
 // 017 兆豐商銀
 dataParser['017'] = function(fn) {
   var ran_number = Math.random() * 4;
-  document.cookie="mega%5Fstatus=1123=745d4a21e71174d0; domain=wwwfile.megabank.com.tw; path=/";
-  dataRequest = $.get('https://wwwfile.megabank.com.tw/rates/D001/_@V_.asp?random=' + ran_number, function(data) {
+  var url = 'https://wwwfile.megabank.com.tw/rates/D001/_@V_.asp?random=' + ran_number;
+  chrome.cookies.set({
+    'url': url,
+    'name': 'mega_status',
+    'value': '1015=5ba2770427b2a837',
+    'domain': 'wwwfile.megabank.com.tw',
+    'path': '/'
+  });
+  dataRequest = $.get(url, function(data) {
     var separate = data.split('|');
     var dateTime = separate[0] + ' ' + separate[1];
     var exData = separate[2].split('__header_=0;');
