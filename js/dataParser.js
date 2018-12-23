@@ -223,7 +223,7 @@ dataParser['009'] = function(fn) {
   dataRequest = $.post('https://www.bankchb.com/frontend/jsp/getG0100_query.jsp', function(result) {
     var res = {};
 
-    res.datetime = result.update_time.replace('-', '/');
+    res.datetime = result.update_time.replace(/-/g, '/');
     res.cashRate = [];
     res.spotRate = [];
 
@@ -253,7 +253,7 @@ dataParser['011'] = function(fn) {
 
     var dom = $(htmlStr);
     var dom = dom.find('table.txt07');
-    var datetimeSp = dom.find('tr:eq(1) td').text().substring(7, 28).split(' ');
+    var datetimeSp = dom.find('tr:eq(1) td').text().substring(7).split(' ');
 
     var datetime = (datetimeSp[0])-0+1911 + '/' + datetimeSp[2] + '/' + datetimeSp[4] + ' ' + datetimeSp[6];
     var dataTable = dom.find('tr');
