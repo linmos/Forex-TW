@@ -56,45 +56,35 @@ dataParser['004'] = function(fn) {
 
 // 005 土地銀行
 dataParser['005'] = function(fn) {
-  dataRequest = $.get('https://ebank.landbank.com.tw/infor/infor.aspx?__eventtarget=querycurrency', function(htmlStr) {
-    htmlStr = htmlStr.replace(/<img[^>]*>/ig, '');
-
-    var dom = $(htmlStr);
-    var datetime = dom.find('#TbDateTime').text().substring(6, 24);
-    var dataTable = dom.find('#Display > tbody > tr');
+  var rand = Math.floor((Math.random() * 9999999999) + 1000000000);
+  dataRequest = $.get(`https://mybank.landbank.com.tw/SIGN/SIGN_finf_01/GetSCExchangeRates?r${rand}`, function(result) {
+    var data = result.RESULT;
     var res = {};
-
-    res.datetime = datetime.replace(/[年月]/g, '/').replace('日', '');
     res.cashRate = [];
     res.spotRate = [];
 
-    dataTable.each(function() {
-      var tds = $(this).find('td');
-      var tmpObj;
+    for (var i = 0; i < data.length; i++) {
+      res.datetime = data[i].QuoDate;
 
-      if (tds.eq(3).hasClass('disptabHeader')) return;
-
-      tmpObj = {
-        title:    $.trim(tds.eq(0).text()),
-        priceIN:  $.trim(tds.eq(1).text()),
-        priceOUT: $.trim(tds.eq(2).text())
-      };
-      if (tmpObj.title.length > 0 && tmpObj.priceIN != '--') {
-        res.spotRate.push(tmpObj);
+      if (data[i].CashBuy != '0' && data[i].CashSell != '0') {
+        res.cashRate.push({
+          title: data[i].CCYItem,
+          priceIN: data[i].CashBuy,
+          priceOUT: data[i].CashSell
+        });
       }
 
-      tmpObj = {
-        title:    $.trim(tds.eq(0).text()),
-        priceIN:  $.trim(tds.eq(3).text()),
-        priceOUT: $.trim(tds.eq(4).text())
-      };
-      if (tmpObj.title.length > 0 && tmpObj.priceIN != '--') {
-        res.cashRate.push(tmpObj);
+      if (data[i].SpotBuy != '0' && data[i].SpotSell != '0') {
+        res.spotRate.push({
+          title: data[i].CCYItem,
+          priceIN: data[i].SpotBuy,
+          priceOUT: data[i].SpotSell
+        });
       }
-    });
+    }
 
     fn.apply(this, [res]);
-  });
+  }, 'json');
 };
 
 // 006 合庫商銀
@@ -230,31 +220,27 @@ dataParser['008'] = function(fn) {
 
 // 009 彰化銀行
 dataParser['009'] = function(fn) {
-  dataRequest = $.post('https://www.bankchb.com/chb_web/garden?action=getView&viewId=G0100', function(data) {
-    var dom = $(data.views[0].data.content);
-    var datetime = $.trim(dom.find('small').text());
-    var dataTable = dom.find('table tbody tr');
+  dataRequest = $.post('https://www.bankchb.com/frontend/jsp/getG0100_query.jsp', function(result) {
     var res = {};
 
-    res.datetime = datetime.substring(6, 25);
+    res.datetime = result.update_time.replace('-', '/');
     res.cashRate = [];
     res.spotRate = [];
 
-    dataTable.each(function() {
-      var tds = $(this).find('td');
+    var data = result.datas;
+    for (var i = 0; i < data.length; i++) {
       var tmpObj = {
-        title:      $.trim(tds.eq(0).text()).split('（')[0],
-        priceIN:    $.trim(tds.eq(1).text()),
-        priceOUT:   $.trim(tds.eq(2).text())
+        title: $.trim(data[i].curname).split(' (')[0],
+        priceIN: data[i].buy,
+        priceOUT: data[i].sell
       };
-
-      var type = tds.eq(0).text();
-      if ((type.indexOf('現鈔') >= 0)  && tmpObj.title.length > 0) {
+      
+      if (data[i].curname.indexOf('現鈔') > -1) {
         res.cashRate.push(tmpObj);
       } else {
         res.spotRate.push(tmpObj);
       }
-    });
+    }
 
     fn.apply(this, [res]);
   }, 'json');
@@ -347,12 +333,13 @@ dataParser['012'] = function(fn) {
 
 // 013 國泰世華
 dataParser['013'] = function(fn) {
-  dataRequest = $.get('https://www.cathaybk.com.tw/mobile/personal/rate/exchange/currency-billboard/currency-billboard.aspx', function(htmlStr) {
+  var url = 'https://www.cathaybk.com.tw/mobile/personal/rate/exchange/currency-billboard/currency-billboard.aspx';
+  dataRequest = $.get(url, function(htmlStr) {
     htmlStr = htmlStr.replace(/<img[^>]*>/ig, '');
 
     var dom = $(htmlStr);
-    var datetime = dom.find('.functionBar .time').text().substring(5, 21);
-    var dataTable = dom.find('#panelRateList .datas table > tbody > tr');
+    var datetime = dom.find('#layout_0_rightcontent_1_firsttab01_0_tab_rate_realtime > .paragraph').text().substring(17, 33);
+    var dataTable = dom.find('#layout_0_rightcontent_1_firsttab01_0_tab_rate_realtime > .table-rate > tbody > tr');
     var res = {};
 
     res.datetime = datetime.replace('年', '/').replace('月', '/').replace('日', ' ').replace('時', ':');
@@ -364,8 +351,8 @@ dataParser['013'] = function(fn) {
 
       var tmpObj = {
         title:      $.trim(tds.eq(0).text()).split('(')[0],
-        priceIN:    $.trim(tds.eq(2).text()),
-        priceOUT:   $.trim(tds.eq(3).text())
+        priceIN:    $.trim(tds.eq(1).text()),
+        priceOUT:   $.trim(tds.eq(2).text())
       };
 
       var type = tds.eq(0).text();
@@ -383,8 +370,15 @@ dataParser['013'] = function(fn) {
 // 017 兆豐商銀
 dataParser['017'] = function(fn) {
   var ran_number = Math.random() * 4;
-  document.cookie="mega%5Fstatus=1123=745d4a21e71174d0; domain=wwwfile.megabank.com.tw; path=/";
-  dataRequest = $.get('https://wwwfile.megabank.com.tw/rates/D001/_@V_.asp?random=' + ran_number, function(data) {
+  var url = 'https://wwwfile.megabank.com.tw/rates/D001/_@V_.asp?random=' + ran_number;
+  chrome.cookies.set({
+    'url': url,
+    'name': 'mega_status',
+    'value': '1223=154aca30abadb894',
+    'domain': 'wwwfile.megabank.com.tw',
+    'path': '/'
+  });
+  dataRequest = $.get(url, function(data) {
     var separate = data.split('|');
     var dateTime = separate[0] + ' ' + separate[1];
     var exData = separate[2].split('__header_=0;');
