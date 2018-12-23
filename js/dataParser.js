@@ -230,13 +230,15 @@ dataParser['008'] = function(fn) {
 
 // 009 彰化銀行
 dataParser['009'] = function(fn) {
-  dataRequest = $.post('https://www.bankchb.com/chb_web/garden?action=getView&viewId=G0100', function(data) {
-    var dom = $(data.views[0].data.content);
-    var datetime = $.trim(dom.find('small').text());
+  dataRequest = $.get('https://www.bankchb.com/frontend/G0100.jsp', function(htmlStr) {
+    htmlStr = htmlStr.replace(/<img[^>]*>/ig, '');
+
+    var dom = $(htmlStr).find('#content-inside');
+    var datetime = $.trim(dom.find('.chb-comp-16').eq(1).text());
     var dataTable = dom.find('table tbody tr');
     var res = {};
 
-    res.datetime = datetime.substring(6, 25);
+    res.datetime = datetime.replace(/\s+/g, ' ').substring(8);
     res.cashRate = [];
     res.spotRate = [];
 
@@ -257,7 +259,7 @@ dataParser['009'] = function(fn) {
     });
 
     fn.apply(this, [res]);
-  }, 'json');
+  });
 };
 
 // 011 上海銀行
@@ -267,9 +269,9 @@ dataParser['011'] = function(fn) {
 
     var dom = $(htmlStr);
     var dom = dom.find('table.txt07');
-    var datetimeSp = dom.find('tr:eq(1) td').text().substring(7, 28).split(' ');
+    var datetimeSp = dom.find('tr:eq(1) td').text().substring(7).split(' ');
 
-    var datetime = (datetimeSp[0])-0+1911 + '/' + datetimeSp[2] + '/' + datetimeSp[4] + ' ' + datetimeSp[6];
+    var datetime = (datetimeSp[0])-0+1911 + '/' + datetimeSp[3] + '/' + datetimeSp[5] + ' ' + datetimeSp[6].substr(-8);
     var dataTable = dom.find('tr');
     var res = {};
 
@@ -351,8 +353,8 @@ dataParser['013'] = function(fn) {
     htmlStr = htmlStr.replace(/<img[^>]*>/ig, '');
 
     var dom = $(htmlStr);
-    var datetime = dom.find('.functionBar .time').text().substring(5, 21);
-    var dataTable = dom.find('#panelRateList .datas table > tbody > tr');
+    var datetime = dom.find('#layout_0_rightcontent_1_firsttab01_0_tab_rate_realtime p').eq(0).text().substring(17, 33);
+    var dataTable = dom.find('table.table-rate > tbody > tr');
     var res = {};
 
     res.datetime = datetime.replace('年', '/').replace('月', '/').replace('日', ' ').replace('時', ':');
@@ -364,8 +366,8 @@ dataParser['013'] = function(fn) {
 
       var tmpObj = {
         title:      $.trim(tds.eq(0).text()).split('(')[0],
-        priceIN:    $.trim(tds.eq(2).text()),
-        priceOUT:   $.trim(tds.eq(3).text())
+        priceIN:    $.trim(tds.eq(1).text()),
+        priceOUT:   $.trim(tds.eq(2).text())
       };
 
       var type = tds.eq(0).text();
@@ -383,8 +385,15 @@ dataParser['013'] = function(fn) {
 // 017 兆豐商銀
 dataParser['017'] = function(fn) {
   var ran_number = Math.random() * 4;
-  document.cookie="mega%5Fstatus=1123=745d4a21e71174d0; domain=wwwfile.megabank.com.tw; path=/";
-  dataRequest = $.get('https://wwwfile.megabank.com.tw/rates/D001/_@V_.asp?random=' + ran_number, function(data) {
+  var url = 'https://wwwfile.megabank.com.tw/rates/D001/_@V_.asp?random=' + ran_number;
+  chrome.cookies.set({
+    'url': url,
+    'name': 'mega_status',
+    'value': '1015=5ba2770427b2a837',
+    'domain': 'wwwfile.megabank.com.tw',
+    'path': '/'
+  });
+  dataRequest = $.get(url, function(data) {
     var separate = data.split('|');
     var dateTime = separate[0] + ' ' + separate[1];
     var exData = separate[2].split('__header_=0;');

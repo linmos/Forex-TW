@@ -20,6 +20,7 @@
 
   "permissions": [
     "storage",
+    "cookies",
     "https://ebank.landbank.com.tw/infor/",
     "http://www.tcb-bank.com.tw/finance_info/Pages/",
     "https://linmos.azurewebsites.net/api/v1/exchange/",
